@@ -17,12 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class IODispatcher implements IDispatcher {
 
-
     private int maxRequest = 32;
 
-    /**
-     * the IO Executor pool
-     */
     private volatile ThreadPoolExecutor ioExecutor;
 
     private Queue<Future<?>> waitingQueen = new ArrayDeque<>();
@@ -63,7 +59,6 @@ public class IODispatcher implements IDispatcher {
         for (int i = 0; i < waitingQueen.size(); i++) {
             runningCoreSize.incrementAndGet();
             ioExecutor.execute((FutureTask<?>) waitingQueen.remove());
-
             if (runningCoreSize.get() >= maxRequest) return;
         }
     }
