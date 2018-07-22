@@ -10,8 +10,8 @@ public interface IPlugin {
     /**
      * load image from network
      *
-     * @param uri the path of the image
+     * @param url the path of the image
      * @return a result of response
      */
-    Response load(String uri);
+    Response load(String url);
 }

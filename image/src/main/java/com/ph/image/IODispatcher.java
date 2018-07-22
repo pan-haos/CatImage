@@ -2,6 +2,7 @@ package com.ph.image;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -40,14 +41,15 @@ public class IODispatcher implements IDispatcher {
     public void enqueue(Future<?> task) {
         if (runningCoreSize.get() < maxRequest) {
             runningCoreSize.incrementAndGet();
-            ioExecutor.execute((FutureTask<?>) task);
+            getIOExecutor().execute((FutureTask<?>) task);
         } else {
             waitingQueen.add(task);
         }
 
     }
 
-    public void finish(FutureTask<?> task) {
+    @Override
+    public void finish(Callable<?> callable) {
         runningCoreSize.decrementAndGet();
         handlerWaitingQueen();
     }
@@ -58,7 +60,7 @@ public class IODispatcher implements IDispatcher {
 
         for (int i = 0; i < waitingQueen.size(); i++) {
             runningCoreSize.incrementAndGet();
-            ioExecutor.execute((FutureTask<?>) waitingQueen.remove());
+            getIOExecutor().execute((FutureTask<?>) waitingQueen.remove());
             if (runningCoreSize.get() >= maxRequest) return;
         }
     }

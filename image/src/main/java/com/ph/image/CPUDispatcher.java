@@ -1,5 +1,6 @@
 package com.ph.image;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -24,6 +25,11 @@ public class CPUDispatcher implements IDispatcher {
     @Override
     public void enqueue(Future<?> task) {
         cpuExecutor.submit((FutureTask<?>) task);
+    }
+
+    @Override
+    public void finish(Callable<?> callable) {
+
     }
 
 }

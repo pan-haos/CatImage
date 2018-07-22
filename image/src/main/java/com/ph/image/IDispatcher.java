@@ -1,5 +1,6 @@
 package com.ph.image;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
@@ -17,5 +18,12 @@ public interface IDispatcher {
      */
     void enqueue(Future<?> task);
 
+
+    /**
+     * 当前任务执行结束
+     *
+     * @param callable
+     */
+    void finish(Callable<?> callable);
 
 }

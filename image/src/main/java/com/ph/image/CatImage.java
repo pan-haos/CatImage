@@ -1,6 +1,6 @@
 package com.ph.image;
 
-import android.support.annotation.DrawableRes;
+import android.content.Context;
 
 /**
  * Auth：CatV
@@ -13,16 +13,10 @@ import android.support.annotation.DrawableRes;
  */
 public class CatImage {
 
-    public static void load(String url) {
-        //优先判定是否为图片，再决定是否解析域名之类
-        if (!ImageUtil.isImage(url)) {
-            throw new IllegalArgumentException("url is not a image,can't load from...${uri}");
-        }
-
+    public static Policy context(Context context) {
+        return new Policy(context);
     }
 
-    public static void load(@DrawableRes int res) {
 
-    }
 
 }
