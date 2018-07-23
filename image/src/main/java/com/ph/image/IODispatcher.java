@@ -24,7 +24,7 @@ public class IODispatcher implements IDispatcher {
 
     private Queue<Future<?>> waitingQueen = new ArrayDeque<>();
 
-    private AtomicInteger runningCoreSize;
+    private AtomicInteger runningCoreSize = new AtomicInteger(0);
 
     public ExecutorService getIOExecutor() {
         if (ioExecutor == null) {

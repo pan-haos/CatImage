@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Autho：CatV
+ * Auth：CatV
  * Project：CatImage
  * Time：18-7-22  上午1:04
  */

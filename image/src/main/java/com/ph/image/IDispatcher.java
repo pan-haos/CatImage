@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
- * Autho：CatV
+ * Auth：CatV
  * Project：CatImage
  * Time：18-7-22  上午12:52
  */

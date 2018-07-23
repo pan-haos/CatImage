@@ -1,7 +1,7 @@
 package com.ph.image;
 
 /**
- * Autho：CatV
+ * Auth：CatV
  * Project：CatImage
  * Time：18-7-22  下午10:55
  */

@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 /**
- * Autho：CatV
+ * Auth：CatV
  * Project：CatImage
  * Time：18-7-22  下午11:21
  */

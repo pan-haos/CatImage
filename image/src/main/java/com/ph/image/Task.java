@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 
 /**
- * Autho：CatV
+ * Auth：CatV
  * Project：CatImage
  * Time：18-7-22  上午12:15
  */
@@ -31,36 +31,30 @@ public class Task implements Callable<Response> {
         }
 
         int responseCode = connection.getResponseCode();
-
-        //successful
+        Response response = null;
         if (responseCode == 200) {
+            //successful
             InputStream inputStream = connection.getInputStream();
             //TODO 把inputStream 封装到response或者其它特定地类里去
-
-
+            response = new Response.Builder()
+                    .inputStream(inputStream)
+                    .respCode(responseCode)
+                    .build();
         } else if (responseCode >= 100 && responseCode < 200) {
 
         } else if (responseCode > 200 && responseCode < 300) {
 
         } else if (responseCode >= 300 && responseCode < 400) {
-
+            //重定向之类
         } else if (responseCode >= 400 & responseCode < 500) {
-
+            //resource not found
         } else if (responseCode >= 500) {
-
+            //err
         } else {
-
+            //don't know
         }
-
-
         dispatcher.finish(this);
-        return null;
+        return response;
     }
 
-    private void requestUri() throws IOException {
-        URL url = new URL(this.url);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-
-    }
 }
