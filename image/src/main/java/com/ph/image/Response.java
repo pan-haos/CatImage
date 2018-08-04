@@ -10,6 +10,8 @@ import java.io.InputStream;
 public class Response {
 
     private InputStream ins;
+
+
     private int respCode;
 
     public Response(Builder builder) {
@@ -33,6 +35,7 @@ public class Response {
 
         //返回码
         private int respCode;
+
 
         public Builder inputStream(InputStream ins) {
             this.ins = ins;

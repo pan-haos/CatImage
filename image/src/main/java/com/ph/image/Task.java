@@ -36,6 +36,7 @@ public class Task implements Callable<Response> {
             //successful
             InputStream inputStream = connection.getInputStream();
             //TODO 把inputStream 封装到response或者其它特定地类里去
+
             response = new Response.Builder()
                     .inputStream(inputStream)
                     .respCode(responseCode)

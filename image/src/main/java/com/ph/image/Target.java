@@ -3,6 +3,7 @@ package com.ph.image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import java.io.InputStream;
@@ -12,10 +13,11 @@ import java.io.InputStream;
  * Project：CatImage
  * Time：18-7-23  下午5:49
  */
-public class Target {
+public class Target{
 
-    private Context context;
-    private Response response;
+     Context context;
+     Response response;
+     Drawable drawable;
 
     public Target(Context context, Response response) {
         this.context = context;

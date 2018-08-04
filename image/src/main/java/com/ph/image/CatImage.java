@@ -1,10 +1,9 @@
 package com.ph.image;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.LruCache;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Auth：CatV
@@ -26,11 +25,18 @@ import java.util.Map;
  */
 public class CatImage {
 
-    private static final int LRU_SIZE = (int) (Runtime.getRuntime().maxMemory() / 8);
+    private LruCache<String, Target> memoryCache;
 
-    public static final Map<String, Target> urlCache = new HashMap<>();
+    private IPlugin plugin;
 
-    public static final LruCache<String, Target> LRU_CACHE = new LruCache<>(LRU_SIZE);
+    public CatImage() {
+        this(new Builder());
+    }
+
+    public CatImage(Builder builder) {
+        this.memoryCache = builder.memoryCache;
+        this.plugin = builder.plugin;
+    }
 
 
     /**
@@ -42,6 +48,7 @@ public class CatImage {
      * (三级缓存)                                                                  ｜-->网络找
      */
     public static void init() {
+
     }
 
 
@@ -52,8 +59,49 @@ public class CatImage {
      * @param context
      * @return
      */
-    public static Policy context(Context context) {
-        return new Policy(context);
+    public Policy context(Context context) {
+        return new Policy(this, context);
+    }
+
+    public static class Builder {
+
+        private static final int LRU_SIZE = (int) (Runtime.getRuntime().maxMemory() / 8);
+
+        private static final int KB = 1024;
+
+        private LruCache<String, Target> memoryCache;
+
+        private IPlugin plugin;
+
+        public Builder() {
+            this.memoryCache = new LruCache<String, Target>(LRU_SIZE) {
+                @Override
+                protected int sizeOf(String key, Target target) {
+                    Bitmap bitmap = ((BitmapDrawable) target.drawable).getBitmap();
+                    return bitmap.getRowBytes() * bitmap.getHeight() / KB;
+                }
+            };
+            this.plugin = new DefaultPlugin();
+        }
+
+        public Builder plugin(IPlugin plugin) {
+            this.plugin = plugin;
+            return this;
+        }
+
+        public Builder memoryCache(LruCache<String, Target> memoryCache) {
+            this.memoryCache = memoryCache;
+            return this;
+        }
+
+        public CatImage build() {
+            //如果没有手动赋值，那么就设为默认的plugin
+            if (this.plugin == null) {
+                plugin = new DefaultPlugin();
+            }
+            return new CatImage(this);
+        }
+
     }
 
 
