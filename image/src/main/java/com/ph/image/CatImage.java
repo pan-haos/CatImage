@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.LruCache;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Auth：CatV
  * Project：CatImage
@@ -25,9 +28,9 @@ import android.util.LruCache;
  */
 public class CatImage {
 
-    private LruCache<String, Target> memoryCache;
+    private final LruCache<String, Target> memoryCache;
 
-    private IPlugin plugin;
+    private final IPlugin plugin;
 
     public CatImage() {
         this(new Builder());
@@ -38,23 +41,19 @@ public class CatImage {
         this.plugin = builder.plugin;
     }
 
-
-    /**
-     * 在Application加载会比较好，将磁盘中的内容加入到内存
-     * 两种方案: 1.在application初始化的时候就开始将全部的磁盘缓存读入内存
-     * 后面只需要直接和内存交互                                                            有
-     * 　　　　                                                          ｜-->磁盘找
-     * 2.按需加载．例如当前的url对应的图片，内存缓存没找到－>http缓存是否有(是否有发生改变)－－－｜ 无
-     * (三级缓存)                                                                  ｜-->网络找
-     */
-    public static void init() {
-
+    public IPlugin getPlugin() {
+        return plugin;
     }
 
+    public LruCache<String, Target> getMemoryCache() {
+        return memoryCache;
+    }
 
     /**
-     * 愁绪难别雨花落，秋风难宿人离别
-     * 一段情，何故萦绕至如今
+     * 两种处理方式：
+     * １.load那个地方修改不立即去下载，因为此时还不清楚bitmap的参数
+     * <p>
+     * 2.这里直接修改返回对象，然后在从这个对象调用load的时候加载Target
      *
      * @param context
      * @return
@@ -67,9 +66,13 @@ public class CatImage {
 
         private static final int LRU_SIZE = (int) (Runtime.getRuntime().maxMemory() / 8);
 
+        private File diskLruCacheDir;
+
         private static final int KB = 1024;
 
         private LruCache<String, Target> memoryCache;
+
+        private DiskLruCache diskCache;
 
         private IPlugin plugin;
 
@@ -81,18 +84,35 @@ public class CatImage {
                     return bitmap.getRowBytes() * bitmap.getHeight() / KB;
                 }
             };
+            try {
+                this.diskCache = DiskLruCache.open(diskLruCacheDir, 1, 1, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             this.plugin = new DefaultPlugin();
         }
 
         public Builder plugin(IPlugin plugin) {
-            this.plugin = plugin;
+            if (plugin != null) {
+                this.plugin = plugin;
+            }
             return this;
         }
 
         public Builder memoryCache(LruCache<String, Target> memoryCache) {
-            this.memoryCache = memoryCache;
+            if (memoryCache != null) {
+                this.memoryCache = memoryCache;
+            }
             return this;
         }
+
+        public Builder diskCache(DiskLruCache diskCache) {
+            if (diskCache != null) {
+                this.diskCache = diskCache;
+            }
+            return this;
+        }
+
 
         public CatImage build() {
             //如果没有手动赋值，那么就设为默认的plugin

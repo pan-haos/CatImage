@@ -24,7 +24,6 @@ public class DefaultPlugin implements IPlugin {
             response = future.get();
         } catch (InterruptedException e) {
             future.cancel(true);
-            e.printStackTrace();
         } catch (ExecutionException e) {
             future.cancel(true);
         }

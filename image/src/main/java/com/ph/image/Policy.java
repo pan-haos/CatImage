@@ -3,6 +3,9 @@ package com.ph.image;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Auth：CatV
  * Project：CatImage
@@ -11,8 +14,7 @@ import android.support.annotation.DrawableRes;
 public class Policy {
 
     private Context context;
-    private CatImage catImage;
-    private IPlugin plugin;
+    final CatImage catImage;
 
 
     public Policy(CatImage catImage, Context context) {
@@ -21,6 +23,17 @@ public class Policy {
     }
 
 
+    public Target load(@DrawableRes int res) {
+        return null;
+    }
+
+
+    /**
+     * 这里的load不应该立即就去网络加载图片,而是应该将信息存下来
+     *
+     * @param url
+     * @return
+     */
     public Target load(String url) {
         //优先判定是否为图片，再决定是否缓存查找
         if (!ImageUtil.isImage(url)) {
@@ -28,6 +41,13 @@ public class Policy {
         }
         Target target = null;
 
+        List<Interceptor> interceptors = new ArrayList<>();
+        interceptors.add(new NetWorkInterceptor());
+        interceptors.add(new MemoryInterceptor());
+
+
+        for (Interceptor interceptor : interceptors) {
+        }
         //TODO 可以刷一条责任链 这里的map可以采用LruCache来替代 责任链实现同一个接口　构建的思维抽象程度可以更高
         /*if (CatImage.urlCache.containsKey(url)) {
             target = CatImage.urlCache.get(url);
@@ -50,7 +70,4 @@ public class Policy {
         return target;
     }
 
-    public Target load(@DrawableRes int res) {
-        return null;
-    }
 }

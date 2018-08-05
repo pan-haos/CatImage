@@ -1,5 +1,7 @@
 package com.ph.image;
 
+import android.graphics.drawable.BitmapDrawable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -37,10 +39,14 @@ public class Task implements Callable<Response> {
             InputStream inputStream = connection.getInputStream();
             //TODO 把inputStream 封装到response或者其它特定地类里去
 
+            BitmapDrawable drawable = new BitmapDrawable();
+
             response = new Response.Builder()
                     .inputStream(inputStream)
                     .respCode(responseCode)
                     .build();
+
+
         } else if (responseCode >= 100 && responseCode < 200) {
 
         } else if (responseCode > 200 && responseCode < 300) {

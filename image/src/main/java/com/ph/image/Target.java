@@ -13,11 +13,11 @@ import java.io.InputStream;
  * Project：CatImage
  * Time：18-7-23  下午5:49
  */
-public class Target{
+public class Target {
 
-     Context context;
-     Response response;
-     Drawable drawable;
+    Context context;
+    Response response;
+    Drawable drawable;
 
     public Target(Context context, Response response) {
         this.context = context;
