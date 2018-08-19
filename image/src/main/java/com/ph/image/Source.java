@@ -1,5 +1,7 @@
 package com.ph.image;
 
+import android.content.Context;
+import android.graphics.ColorFilter;
 import android.widget.ImageView;
 
 /**
@@ -24,13 +26,24 @@ import android.widget.ImageView;
  * <p>
  * 支持取消/中断　task
  */
-public class Source implements Cloneable {
+public class Source<T> implements Cloneable {
+
+    final Dest<T> dest;
+    final Context context;
+
+    public Source(Builder<T> builder) {
+        this.dest = builder.dest;
+        this.context = builder.context;
+    }
+
     /**
      * 首先必须有一个类持有imageView，但是这个类不能是静态的
      * <p>
      * 　url不同
      * 　imageview　不同
      * activity　不同
+     * <p>
+     * into　应该进入一个构建好了BitmapInfo和url/res/drawable的类中
      *
      * @param imageView
      */
@@ -40,16 +53,46 @@ public class Source implements Cloneable {
         int width = imageView.getWidth();
         int height = imageView.getHeight();
         //TODO　按顺序来说:先配置好参数　- >　设置好加载时机和机制　 - > 去特定的地方加载
-        //跨进程加载
+        ImageView.ScaleType scaleType = imageView.getScaleType();
+        int baseline = imageView.getBaseline();
+        boolean baselineAlignBottom = imageView.getBaselineAlignBottom();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            boolean cropToPadding = imageView.getCropToPadding();
+            boolean adjustViewBounds = imageView.getAdjustViewBounds();
+            ColorFilter colorFilter = imageView.getColorFilter();
+            CharSequence accessibilityClassName = imageView.getAccessibilityClassName();
+        }
+        //参数这里配置好?
+        into(width, height, imageView);
+    }
 
+    private void into(int width, int height, ImageView imageView) {
 
     }
 
+    public static class Builder<V> {
+        private Dest<V> dest;
+        private Context context;
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new Source();
+        public Builder<V> dest(Dest<V> dest) {
+            this.dest = dest;
+            return this;
+        }
+
+        public Builder<V> dest(Class<V> source, V data) {
+            this.dest = new Dest<>(source, data);
+            return this;
+        }
+
+        public Builder<V> context(Context context) {
+            this.context = context;
+            return this;
+        }
+
+        public Source<V> build() {
+            return new Source<>(this);
+        }
+
+
     }
-
-
 }

@@ -10,7 +10,6 @@ import java.io.InputStream;
 public class Response {
 
     private InputStream ins;
-
     private int respCode;
 
     public Response(Builder builder) {

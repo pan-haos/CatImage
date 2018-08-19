@@ -1,12 +1,7 @@
 package com.ph.image;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
-
-import java.io.InputStream;
 
 /**
  * Auth：CatV
@@ -24,9 +19,4 @@ public class Target {
         this.response = response;
     }
 
-    public void into(ImageView imageView) {
-        InputStream stream = response.stream();
-        Bitmap bmp = BitmapFactory.decodeStream(stream);
-        imageView.setImageBitmap(bmp);
-    }
 }
