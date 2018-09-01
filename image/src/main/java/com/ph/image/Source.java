@@ -2,7 +2,11 @@ package com.ph.image;
 
 import android.content.Context;
 import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.widget.ImageView;
+
+import java.io.File;
 
 /**
  * Auth：CatV
@@ -30,10 +34,12 @@ public class Source<T> implements Cloneable {
 
     final Dest<T> dest;
     final Context context;
+    private Loader loader;
 
     public Source(Builder<T> builder) {
         this.dest = builder.dest;
         this.context = builder.context;
+
     }
 
     /**
@@ -67,10 +73,25 @@ public class Source<T> implements Cloneable {
     }
 
     private void into(int width, int height, ImageView imageView) {
-
+        //现在要去加载图片了,而且是根据不同的内容去转换
+        if (dest.source.equals(Integer.class)) {
+            Integer res = (Integer) dest.data;
+            imageView.setImageResource(res);
+        } else if (dest.source.equals(Drawable.class)) {
+            Drawable drawable = (Drawable) dest.data;
+            imageView.setImageDrawable(drawable);
+        } else if (dest.source.equals(File.class)) {
+            File file = (File) dest.data;
+            imageView.setImageURI(Uri.fromFile(file));
+        } else if (dest.source.equals(String.class)) {
+            String url = (String) dest.data;
+            Drawable drawable = Loader.getLoader().load(url);
+            imageView.setImageDrawable(drawable);
+        }
     }
 
     public static class Builder<V> {
+
         private Dest<V> dest;
         private Context context;
 
@@ -92,7 +113,6 @@ public class Source<T> implements Cloneable {
         public Source<V> build() {
             return new Source<>(this);
         }
-
 
     }
 }

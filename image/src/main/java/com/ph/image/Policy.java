@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 
+import java.io.File;
+
 /**
  * Auth：CatV
  * Project：CatImage
@@ -35,6 +37,10 @@ public class Policy {
 
     public Source load(Drawable drawable) {
         return generate(Drawable.class, drawable);
+    }
+
+    public Source load(File file) {
+        return generate(File.class, file);
     }
 
 

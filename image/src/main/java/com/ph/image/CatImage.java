@@ -30,6 +30,8 @@ public class CatImage {
 
     private final LruCache<String, Target> memoryCache;
 
+    private final DiskLruCache diskLruCache;
+
     private final IPlugin plugin;
 
     public CatImage() {
@@ -39,6 +41,7 @@ public class CatImage {
     public CatImage(Builder builder) {
         this.memoryCache = builder.memoryCache;
         this.plugin = builder.plugin;
+        this.diskLruCache = builder.diskCache;
     }
 
     public IPlugin getPlugin() {
@@ -47,6 +50,10 @@ public class CatImage {
 
     public LruCache<String, Target> getMemoryCache() {
         return memoryCache;
+    }
+
+    public DiskLruCache getDiskLruCache() {
+        return diskLruCache;
     }
 
     /**
