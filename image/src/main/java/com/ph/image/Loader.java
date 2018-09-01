@@ -44,12 +44,14 @@ public class Loader {
     }
 
     public Drawable load(String url) {
-        Interceptor.Chain chain = new RealChain(url);
+
 
         List<Interceptor> interceptors = new ArrayList<>();
         interceptors.add(new MemoryInterceptor());
         interceptors.add(new NetWorkInterceptor());
         interceptors.add(new DiskInterceptor());
+
+        Interceptor.Chain chain = new RealChain(interceptors);
 
         chain.get(url);
 
