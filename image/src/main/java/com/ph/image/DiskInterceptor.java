@@ -1,6 +1,9 @@
 package com.ph.image;
 
+import com.ph.image.remote.RemoteCache;
+
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Auth：CatV
@@ -10,16 +13,11 @@ import java.io.IOException;
 public class DiskInterceptor implements Interceptor {
 
     @Override
-    public Target intercept(Chain chain) {
-        DiskLruCache diskLruCache = chain.policy().catImage.getDiskLruCache();
-
-        try {
-            DiskLruCache.Snapshot snapshot = diskLruCache.get(chain.url());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Target intercept(Chain chain) throws IOException {
+        String url = chain.url();
+        String diskFilePath = chain.diskFilePath();
+        InputStream inputStream = RemoteCache.getDiskLruCache(diskFilePath).get(url).getInputStream(0);
+        return chain.get(url);
     }
 
 }

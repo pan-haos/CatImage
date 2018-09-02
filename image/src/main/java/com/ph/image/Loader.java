@@ -1,15 +1,19 @@
 package com.ph.image;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.RemoteException;
 import android.util.LruCache;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Auth：CatV
  * Project：CatImage
  * Time：18-8-20 09:49
+ * <p>
+ * the real worker to load img from local memory cache or remote memory/disk/cache and network.
+ * we use the four grades of cache to make sure it can provide a powerful cache so need't always
+ * get result from network and avoid local memory not enough for it
  */
 public class Loader {
 
@@ -19,17 +23,16 @@ public class Loader {
 
     private static final int KB = 1024;
 
-    private static LruCache<String, Drawable> memoryCache;
+    private static LruCache<String, Target> localMemoryCache;
 
     private Loader() {
-        memoryCache = new LruCache<String, Drawable>(LRU_SIZE) {
+        localMemoryCache = new LruCache<String, Target>(LRU_SIZE) {
             @Override
-            protected int sizeOf(String key, Drawable target) {
-//                return target.getRowBytes() * target.getHeight() / KB;
-                return 0;
+            protected int sizeOf(String key, Target target) {
+                Bitmap bitmap = ((BitmapDrawable) target.getDrawable()).getBitmap();
+                return bitmap.getRowBytes() * bitmap.getHeight() / KB;
             }
         };
-
     }
 
     public static Loader getLoader() {
@@ -43,38 +46,20 @@ public class Loader {
         return loader;
     }
 
-    public Drawable load(String url) {
-
-
-        List<Interceptor> interceptors = new ArrayList<>();
-        interceptors.add(new MemoryInterceptor());
-        interceptors.add(new NetWorkInterceptor());
-        interceptors.add(new DiskInterceptor());
-
-        Interceptor.Chain chain = new RealChain(interceptors);
-
-        chain.get(url);
-
-        //TODO 可以刷一条责任链 这里的map可以采用LruCache来替代 责任链实现同一个接口　构建的思维抽象程度可以更高
-        /*if (CatImage.urlCache.containsKey(url)) {
-            target = CatImage.urlCache.get(url);
-        } else {
-            //TODO 去访问http网络缓存--目的为了看图片是否改变，是会产生网络交互，未改变火访问失败仍然去内存缓存拿，拿到结果要刷新内存和磁盘缓存
-            //TODO 这里只是一段实例代码，并不完整
-            boolean changed = false;
-            if (changed) {
-                //从网络上拿到图片，
-                Response response = plugin.load(url);
-                //drc
-                target = new Target(context, response);
-                CatImage.urlCache.put(url, target);
-                //磁盘缓存写入
-            } else {
-                //TODO 去磁盘拿并且刷新内存缓存
-                CatImage.urlCache.put(url, target);
+    public Bitmap load(Context context, String url, IImageInterface imageInterface) {
+        Bitmap bitmap = null;
+        Target target = localMemoryCache.get(url);
+        if (target == null) {
+            try {
+                // put it to local process's memory cache
+                bitmap = imageInterface.remoteResponse(url, 30);
+                target = new Target(bitmap);
+                localMemoryCache.put(url, target);
+            } catch (RemoteException e) {
+                CatLogger.e("CatImage on RemoteTransform has exception" + e.getMessage());
             }
-        }*/
-        return null;
+        }
+        return bitmap;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.ph.image;
 
+import java.io.IOException;
+
 /**
  * Auth：CatV
  * Project：CatImage
@@ -13,7 +15,7 @@ public interface Interceptor {
      * @param chain
      * @return
      */
-    Target intercept(Chain chain);
+    Target intercept(Chain chain) throws IOException;
 
     interface Chain {
         /**
@@ -23,10 +25,14 @@ public interface Interceptor {
          * @param url
          * @return
          */
-        Target get(String url);
-
-        Policy policy();
+        Target get(String url) throws IOException;
 
         String url();
+
+        int waitTimeOut();
+
+        int memoryCacheSize();
+
+        String diskFilePath();
     }
 }

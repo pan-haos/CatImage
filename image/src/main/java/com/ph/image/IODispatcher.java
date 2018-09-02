@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 作者：潘浩
+ * 作者：CatV
  * 项目：CatImage
  * 时间：18-7-21  下午11:56
  */
@@ -26,7 +26,7 @@ public class IODispatcher implements IDispatcher {
 
     private AtomicInteger runningCoreSize = new AtomicInteger(0);
 
-    public ExecutorService getIOExecutor() {
+    private ExecutorService getIOExecutor() {
         if (ioExecutor == null) {
             synchronized (this) {
                 if (ioExecutor == null) {
@@ -45,7 +45,6 @@ public class IODispatcher implements IDispatcher {
         } else {
             waitingQueen.add(task);
         }
-
     }
 
     @Override

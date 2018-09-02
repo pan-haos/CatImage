@@ -1,2 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ph.image" />
+    package="com.ph.image">
+
+    <application>
+
+    </application>
+
+
+
+</manifest>
+
+
+

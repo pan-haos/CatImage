@@ -1,6 +1,7 @@
 package com.ph.image;
 
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +14,7 @@ import java.util.concurrent.Callable;
  * Project：CatImage
  * Time：18-7-22  上午12:15
  */
-public class Task implements Callable<Response> {
+public class Task implements Callable<Bitmap> {
 
     private IDispatcher dispatcher;
     private String url;
@@ -24,7 +25,7 @@ public class Task implements Callable<Response> {
     }
 
     @Override
-    public Response call() throws IOException {
+    public Bitmap call() throws IOException {
         // TODO 通过httpUrlConnection来获取的InputStream
         URL url = new URL(this.url);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -33,20 +34,12 @@ public class Task implements Callable<Response> {
         }
 
         int responseCode = connection.getResponseCode();
-        Response response = null;
+        Bitmap bitmap = null;
         if (responseCode == 200) {
             //successful
             InputStream inputStream = connection.getInputStream();
             //TODO 把inputStream 封装到response或者其它特定地类里去
-
-            BitmapDrawable drawable = new BitmapDrawable();
-
-            response = new Response.Builder()
-                    .inputStream(inputStream)
-                    .respCode(responseCode)
-                    .build();
-
-
+            bitmap = BitmapFactory.decodeStream(inputStream);
         } else if (responseCode >= 100 && responseCode < 200) {
 
         } else if (responseCode > 200 && responseCode < 300) {
@@ -61,7 +54,7 @@ public class Task implements Callable<Response> {
             //don't know
         }
         dispatcher.finish(this);
-        return response;
+        return bitmap;
     }
 
 }

@@ -5,9 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.LruCache;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * Auth：CatV
  * Project：CatImage
@@ -25,13 +22,12 @@ import java.io.IOException;
  * url是否需要做缓存----必须缓存，否则同一张图片多次加载，占用不必要的IO 内存缓存/磁盘缓存
  * url 也需要一份内存缓存,目的在内存操作时，直接加载
  * 磁盘缓存什么时候加载的问题
+ * <p>
+ * 外部配置(Configure---->本地内存大小/remote内存大小/remoteDisk内存大小/remoteDisk path,remote plugin)
  */
 public class CatImage {
 
     private final LruCache<String, Target> memoryCache;
-
-    private final DiskLruCache diskLruCache;
-
     private final IPlugin plugin;
 
     public CatImage() {
@@ -41,7 +37,6 @@ public class CatImage {
     public CatImage(Builder builder) {
         this.memoryCache = builder.memoryCache;
         this.plugin = builder.plugin;
-        this.diskLruCache = builder.diskCache;
     }
 
     public IPlugin getPlugin() {
@@ -50,10 +45,6 @@ public class CatImage {
 
     public LruCache<String, Target> getMemoryCache() {
         return memoryCache;
-    }
-
-    public DiskLruCache getDiskLruCache() {
-        return diskLruCache;
     }
 
     /**
@@ -73,29 +64,22 @@ public class CatImage {
 
         private static final int LRU_SIZE = (int) (Runtime.getRuntime().maxMemory() / 8);
 
-        private File diskLruCacheDir;
-
         private static final int KB = 1024;
 
         private LruCache<String, Target> memoryCache;
 
-        private DiskLruCache diskCache;
-
         private IPlugin plugin;
+
+        private IImageInterface imageInterface;
 
         public Builder() {
             this.memoryCache = new LruCache<String, Target>(LRU_SIZE) {
                 @Override
                 protected int sizeOf(String key, Target target) {
-                    Bitmap bitmap = ((BitmapDrawable) target.drawable).getBitmap();
+                    Bitmap bitmap = ((BitmapDrawable) target.getDrawable()).getBitmap();
                     return bitmap.getRowBytes() * bitmap.getHeight() / KB;
                 }
             };
-            try {
-                this.diskCache = DiskLruCache.open(diskLruCacheDir, 1, 1, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             this.plugin = new DefaultPlugin();
         }
 
@@ -106,20 +90,17 @@ public class CatImage {
             return this;
         }
 
+        public Builder imageInterface(IImageInterface imageInterface) {
+            this.imageInterface = imageInterface;
+            return this;
+        }
+
         public Builder memoryCache(LruCache<String, Target> memoryCache) {
             if (memoryCache != null) {
                 this.memoryCache = memoryCache;
             }
             return this;
         }
-
-        public Builder diskCache(DiskLruCache diskCache) {
-            if (diskCache != null) {
-                this.diskCache = diskCache;
-            }
-            return this;
-        }
-
 
         public CatImage build() {
             //如果没有手动赋值，那么就设为默认的plugin

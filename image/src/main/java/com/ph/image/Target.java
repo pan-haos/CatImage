@@ -1,5 +1,6 @@
 package com.ph.image;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -9,11 +10,19 @@ import android.graphics.drawable.Drawable;
  */
 public class Target {
 
-    Response response;
-    Drawable drawable;
+    private Bitmap bitmap;
+    private Drawable drawable;
 
-    public Target(Response response) {
-        this.response = response;
+    public Target(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public Drawable getDrawable() {
+        return drawable;
     }
 
 }

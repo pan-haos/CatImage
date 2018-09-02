@@ -1,6 +1,7 @@
 package com.ph.image;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -32,14 +33,16 @@ import java.io.File;
  */
 public class Source<T> implements Cloneable {
 
-    final Dest<T> dest;
-    final Context context;
+    private final Context context;
+    private final IImageInterface imageInterface;
+    private final Dest<T> dest;
+
     private Loader loader;
 
     public Source(Builder<T> builder) {
         this.dest = builder.dest;
         this.context = builder.context;
-
+        this.imageInterface = builder.imageInterface;
     }
 
     /**
@@ -85,8 +88,9 @@ public class Source<T> implements Cloneable {
             imageView.setImageURI(Uri.fromFile(file));
         } else if (dest.source.equals(String.class)) {
             String url = (String) dest.data;
-            Drawable drawable = Loader.getLoader().load(url);
-            imageView.setImageDrawable(drawable);
+            Bitmap bitmap = Loader.getLoader().load(context, url, imageInterface);
+            imageView.setImageBitmap(bitmap);
+
         }
     }
 
@@ -94,6 +98,8 @@ public class Source<T> implements Cloneable {
 
         private Dest<V> dest;
         private Context context;
+        private IImageInterface imageInterface;
+
 
         public Builder<V> dest(Dest<V> dest) {
             this.dest = dest;
@@ -107,6 +113,11 @@ public class Source<T> implements Cloneable {
 
         public Builder<V> context(Context context) {
             this.context = context;
+            return this;
+        }
+
+        public Builder<V> imageInterface(IImageInterface imageInterface) {
+            this.imageInterface = imageInterface;
             return this;
         }
 

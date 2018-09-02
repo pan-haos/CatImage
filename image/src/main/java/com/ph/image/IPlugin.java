@@ -1,5 +1,7 @@
 package com.ph.image;
 
+import android.graphics.Bitmap;
+
 /**
  * 作者：潘浩
  * 项目：CatImage
@@ -14,7 +16,7 @@ public interface IPlugin {
      * load image from network
      *
      * @param url the path of the image
-     * @return a result of response
+     * @return a result of bitmap
      */
-    Response load(String url);
+    Bitmap load(String url);
 }

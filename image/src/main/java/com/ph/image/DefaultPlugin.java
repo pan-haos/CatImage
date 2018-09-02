@@ -1,5 +1,7 @@
 package com.ph.image;
 
+import android.graphics.Bitmap;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -13,21 +15,22 @@ import java.util.concurrent.FutureTask;
 public class DefaultPlugin implements IPlugin {
 
     private IDispatcher dispatcher = new IODispatcher();
+    private IDispatcher cpuDispatcher = new CPUDispatcher();
 
     @Override
-    public Response load(String url) {
-        Callable<Response> callable = new Task(dispatcher, url);
-        Future<Response> future = new FutureTask<>(callable);
+    public Bitmap load(String url) {
+        Callable<Bitmap> callable = new Task(dispatcher, url);
+        Future<Bitmap> future = new FutureTask<>(callable);
         dispatcher.enqueue(future);
-        Response response = null;
+        Bitmap bitmap = null;
         try {
-            response = future.get();
+            bitmap = future.get();
         } catch (InterruptedException e) {
             future.cancel(true);
         } catch (ExecutionException e) {
             future.cancel(true);
         }
-        return response;
+        return bitmap;
     }
 
 }

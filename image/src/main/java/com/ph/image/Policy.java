@@ -13,8 +13,8 @@ import java.io.File;
  */
 public class Policy {
 
-    private Context context;
-    final CatImage catImage;
+    private final Context context;
+    private final CatImage catImage;
 
 
     public Policy(CatImage catImage, Context context) {
@@ -56,34 +56,6 @@ public class Policy {
             throw new IllegalArgumentException("url is not a image url, can't load from...${uri}");
         }
         return generate(String.class, url);
-        /*Target target = null;
-
-        List<Interceptor> interceptors = new ArrayList<>();
-        interceptors.add(new NetWorkInterceptor());
-        interceptors.add(new MemoryInterceptor());
-
-
-        for (Interceptor interceptor : interceptors) {
-        }*/
-        //TODO 可以刷一条责任链 这里的map可以采用LruCache来替代 责任链实现同一个接口　构建的思维抽象程度可以更高
-        /*if (CatImage.urlCache.containsKey(url)) {
-            target = CatImage.urlCache.get(url);
-        } else {
-            //TODO 去访问http网络缓存--目的为了看图片是否改变，是会产生网络交互，未改变火访问失败仍然去内存缓存拿，拿到结果要刷新内存和磁盘缓存
-            //TODO 这里只是一段实例代码，并不完整
-            boolean changed = false;
-            if (changed) {
-                //从网络上拿到图片，
-                Response response = plugin.load(url);
-                //drc
-                target = new Target(context, response);
-                CatImage.urlCache.put(url, target);
-                //磁盘缓存写入
-            } else {
-                //TODO 去磁盘拿并且刷新内存缓存
-                CatImage.urlCache.put(url, target);
-            }
-        }*/
     }
 
     private <T> Source<T> generate(Class<T> source, T data) {
